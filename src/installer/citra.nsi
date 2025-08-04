@@ -100,20 +100,9 @@ Var DesktopShortcut
 
 ; MUI end ------
 
-!include "WinVer.nsh"
-; Declare the installer itself as win10/win11 compatible, so WinVer.nsh works correctly.
-ManifestSupportedOS {8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}
-
 Function .onInit
   StrCpy $DesktopShortcut 1
   !insertmacro MULTIUSER_INIT
-
-  !define MIN_WIN10_VERSION 1607
-  ${IfNot} ${AtLeastwin10}
-  ${OrIfNot} ${AtLeastWaaS} ${MIN_WIN10_VERSION}
-    MessageBox MB_OK "At least Windows 10 version ${MIN_WIN10_VERSION} is required."
-    Abort
-  ${EndIf}
 
   !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
