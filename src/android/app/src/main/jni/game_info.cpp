@@ -17,41 +17,28 @@
 
 namespace {
 
-static constexpr u64 UPDATE_TID_HIGH = 0x0004000e00000000;
-
-struct GameInfoData {
-    Loader::SMDH smdh;
-    u64 title_id = 0;
-    bool loaded = false;
-    bool is_encrypted = false;
-    std::string file_type = "";
-};
-
-GameInfoData* GetNewGameInfoData(const std::string& path) {
+std::vector<u8> GetSMDHData(const std::string& path, bool& is_encrypted) {
     std::unique_ptr<Loader::AppLoader> loader = Loader::GetLoader(path);
-    u64 program_id = 0;
-    bool is_encrypted = false;
-
-    if (!loader || loader->ReadProgramId(program_id) != Loader::ResultStatus::Success) {
-        GameInfoData* gid = new GameInfoData();
-        memset(&gid->smdh, 0, sizeof(Loader::SMDH));
-        return gid;
+    if (!loader) {
+        return {};
     }
+
+    u64 program_id = 0;
+    loader->ReadProgramId(program_id);
 
     std::vector<u8> smdh = [program_id, &loader, &is_encrypted]() -> std::vector<u8> {
         std::vector<u8> original_smdh;
         auto result = loader->ReadIcon(original_smdh);
-        if (result != Loader::ResultStatus::Success) {
-            is_encrypted = result == Loader::ResultStatus::ErrorEncrypted;
-            return {};
+        if (result == Loader::ResultStatus::ErrorEncrypted) {
+            is_encrypted = true;
+            return original_smdh;
         }
 
         if (program_id < 0x00040000'00000000 || program_id > 0x00040000'FFFFFFFF)
             return original_smdh;
 
-        u64 update_tid = (program_id & 0xFFFFFFFFULL) | UPDATE_TID_HIGH;
-        std::string update_path =
-            Service::AM::GetTitleContentPath(Service::FS::MediaType::SDMC, update_tid);
+        std::string update_path = Service::AM::GetTitleContentPath(
+            Service::FS::MediaType::SDMC, program_id + 0x0000000E'00000000);
 
         if (!FileUtil::Exists(update_path))
             return original_smdh;
@@ -62,50 +49,41 @@ GameInfoData* GetNewGameInfoData(const std::string& path) {
             return original_smdh;
 
         std::vector<u8> update_smdh;
-        result = update_loader->ReadIcon(update_smdh);
-        if (result != Loader::ResultStatus::Success) {
-            is_encrypted = result == Loader::ResultStatus::ErrorEncrypted;
-            return {};
-        }
+        update_loader->ReadIcon(update_smdh);
         return update_smdh;
     }();
 
-    GameInfoData* gid = new GameInfoData();
-    if (smdh.empty()) {
-        std::memset(&gid->smdh, 0, sizeof(Loader::SMDH));
-    } else {
-        std::memcpy(&gid->smdh, smdh.data(), smdh.size());
-    }
-    gid->loaded = true;
-    gid->is_encrypted = is_encrypted;
-    gid->title_id = program_id;
-    gid->file_type = Loader::GetFileTypeString(loader->GetFileType(), loader->IsFileCompressed());
-
-    return gid;
+    return smdh;
 }
 
 } // namespace
 
 extern "C" {
 
-static GameInfoData* GetPointer(JNIEnv* env, jobject obj) {
-    return reinterpret_cast<GameInfoData*>(env->GetLongField(obj, IDCache::GetGameInfoPointer()));
+static Loader::SMDH* GetPointer(JNIEnv* env, jobject obj) {
+    return reinterpret_cast<Loader::SMDH*>(env->GetLongField(obj, IDCache::GetGameInfoPointer()));
 }
 
 JNIEXPORT jlong JNICALL Java_org_citra_citra_1emu_model_GameInfo_initialize(JNIEnv* env, jclass,
                                                                             jstring j_path) {
-    GameInfoData* game_info_data = GetNewGameInfoData(GetJString(env, j_path));
-    return reinterpret_cast<jlong>(game_info_data);
-}
+    bool is_encrypted = false;
+    std::vector<u8> smdh_data = GetSMDHData(GetJString(env, j_path), is_encrypted);
 
-JNIEXPORT jboolean JNICALL Java_org_citra_citra_1emu_model_GameInfo_isValid(JNIEnv* env,
-                                                                            jobject obj) {
-    return GetPointer(env, obj)->loaded;
+    Loader::SMDH* smdh = nullptr;
+    if (is_encrypted) {
+        smdh = new Loader::SMDH;
+        smdh->magic = 0xDEADDEAD;
+    } else if (Loader::IsValidSMDH(smdh_data)) {
+        smdh = new Loader::SMDH;
+        std::memcpy(smdh, smdh_data.data(), sizeof(Loader::SMDH));
+    }
+    return reinterpret_cast<jlong>(smdh);
 }
 
 JNIEXPORT jboolean JNICALL Java_org_citra_citra_1emu_model_GameInfo_isEncrypted(JNIEnv* env,
                                                                                 jobject obj) {
-    return GetPointer(env, obj)->is_encrypted;
+    Loader::SMDH* smdh = GetPointer(env, obj);
+    return smdh->magic == 0xDEADDEAD;
 }
 
 JNIEXPORT void JNICALL Java_org_citra_citra_1emu_model_GameInfo_finalize(JNIEnv* env, jobject obj) {
@@ -113,11 +91,7 @@ JNIEXPORT void JNICALL Java_org_citra_citra_1emu_model_GameInfo_finalize(JNIEnv*
 }
 
 jstring Java_org_citra_citra_1emu_model_GameInfo_getTitle(JNIEnv* env, jobject obj) {
-    Loader::SMDH* smdh = &GetPointer(env, obj)->smdh;
-    if (!smdh->IsValid()) {
-        return ToJString(env, "");
-    }
-
+    Loader::SMDH* smdh = GetPointer(env, obj);
     Loader::SMDH::TitleLanguage language = Loader::SMDH::TitleLanguage::English;
 
     // Get the title from SMDH in UTF-16 format
@@ -128,11 +102,7 @@ jstring Java_org_citra_citra_1emu_model_GameInfo_getTitle(JNIEnv* env, jobject o
 }
 
 jstring Java_org_citra_citra_1emu_model_GameInfo_getCompany(JNIEnv* env, jobject obj) {
-    Loader::SMDH* smdh = &GetPointer(env, obj)->smdh;
-    if (!smdh->IsValid()) {
-        return ToJString(env, "");
-    }
-
+    Loader::SMDH* smdh = GetPointer(env, obj);
     Loader::SMDH::TitleLanguage language = Loader::SMDH::TitleLanguage::English;
 
     // Get the Publisher's name from SMDH in UTF-16 format
@@ -143,15 +113,8 @@ jstring Java_org_citra_citra_1emu_model_GameInfo_getCompany(JNIEnv* env, jobject
     return ToJString(env, Common::UTF16ToUTF8(publisher).data());
 }
 
-jlong Java_org_citra_citra_1emu_model_GameInfo_getTitleID(JNIEnv* env, jobject obj) {
-    return static_cast<jlong>(GetPointer(env, obj)->title_id);
-}
-
 jstring Java_org_citra_citra_1emu_model_GameInfo_getRegions(JNIEnv* env, jobject obj) {
-    Loader::SMDH* smdh = &GetPointer(env, obj)->smdh;
-    if (!smdh->IsValid()) {
-        return ToJString(env, "");
-    }
+    Loader::SMDH* smdh = GetPointer(env, obj);
 
     using GameRegion = Loader::SMDH::GameRegion;
     static const std::map<GameRegion, const char*> regions_map = {
@@ -184,10 +147,7 @@ jstring Java_org_citra_citra_1emu_model_GameInfo_getRegions(JNIEnv* env, jobject
 }
 
 jintArray Java_org_citra_citra_1emu_model_GameInfo_getIcon(JNIEnv* env, jobject obj) {
-    Loader::SMDH* smdh = &GetPointer(env, obj)->smdh;
-    if (!smdh->IsValid()) {
-        return nullptr;
-    }
+    Loader::SMDH* smdh = GetPointer(env, obj);
 
     // Always get a 48x48(large) icon
     std::vector<u16> icon_data = smdh->GetIcon(true);
@@ -202,23 +162,12 @@ jintArray Java_org_citra_citra_1emu_model_GameInfo_getIcon(JNIEnv* env, jobject 
     return icon;
 }
 
-jboolean Java_org_citra_citra_1emu_model_GameInfo_isSystemTitle(JNIEnv* env, jobject obj) {
-    return ((GetPointer(env, obj)->title_id >> 32) & 0xFFFFFFFF) == 0x00040010;
-}
-
 jboolean Java_org_citra_citra_1emu_model_GameInfo_getIsVisibleSystemTitle(JNIEnv* env,
                                                                           jobject obj) {
-    Loader::SMDH* smdh = &GetPointer(env, obj)->smdh;
-    if (!smdh->IsValid()) {
+    Loader::SMDH* smdh = GetPointer(env, obj);
+    if (smdh == nullptr) {
         return false;
     }
-
     return smdh->flags & Loader::SMDH::Flags::Visible;
-}
-
-jstring Java_org_citra_citra_1emu_model_GameInfo_getFileType(JNIEnv* env, jobject obj) {
-    std::string& file_type = GetPointer(env, obj)->file_type;
-
-    return ToJString(env, file_type);
 }
 }

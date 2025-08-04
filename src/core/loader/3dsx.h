@@ -41,8 +41,6 @@ public:
 
     CompressFileInfo GetCompressFileInfo() override;
 
-    bool IsFileCompressed() override;
-
 private:
     std::string filename;
     std::string filepath;

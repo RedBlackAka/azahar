@@ -1,4 +1,4 @@
-// Copyright Citra Emulator Project / Azahar Emulator Project
+// Copyright Citra Emulator Project / Lime3DS Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
@@ -26,8 +26,7 @@ class Game(
     val isSystemTitle: Boolean = false,
     val isVisibleSystemTitle: Boolean = false,
     val icon: IntArray? = null,
-    val fileType: String = "",
-    val filename: String,
+    val filename: String
 ) : Parcelable {
     val keyAddedToLibraryTime get() = "${filename}_AddedToLibraryTime"
     val keyLastPlayedTime get() = "${filename}_LastPlayed"

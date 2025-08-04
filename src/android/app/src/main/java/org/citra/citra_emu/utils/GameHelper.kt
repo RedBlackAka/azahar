@@ -70,26 +70,29 @@ object GameHelper {
 
     fun getGame(uri: Uri, isInstalled: Boolean, addedToLibrary: Boolean): Game {
         val filePath = uri.toString()
-        var gameInfo: GameInfo? = GameInfo(filePath)
-
-        if (gameInfo?.isValid() == false) {
-            gameInfo = null
+        var gameInfo: GameInfo? = try {
+            GameInfo(filePath)
+        } catch (e: IOException) {
+            null
         }
 
-        val isEncrypted = gameInfo?.isEncrypted() == true
+        var isEncrypted = false
+        if (gameInfo?.isEncrypted() == true) {
+            gameInfo = null
+            isEncrypted = true
+        }
 
         val newGame = Game(
             (gameInfo?.getTitle() ?: FileUtil.getFilename(uri)).replace("[\\t\\n\\r]+".toRegex(), " "),
             filePath.replace("\n", " "),
             filePath,
-            gameInfo?.getTitleID() ?: 0,
+            NativeLibrary.getTitleId(filePath),
             gameInfo?.getCompany() ?: "",
-            if (isEncrypted) { CitraApplication.appContext.getString(R.string.unsupported_encrypted) } else { gameInfo?.getRegions() ?: "" },
+            gameInfo?.getRegions() ?: (if (isEncrypted) { CitraApplication.appContext.getString(R.string.unsupported_encrypted) } else { CitraApplication.appContext.getString(R.string.invalid_region) }),
             isInstalled,
-            gameInfo?.isSystemTitle() ?: false,
+            NativeLibrary.getIsSystemTitle(filePath),
             gameInfo?.getIsVisibleSystemTitle() ?: false,
             gameInfo?.getIcon(),
-            gameInfo?.getFileType() ?: "",
             if (FileUtil.isNativePath(filePath)) {
                 CitraApplication.documentsTree.getFilename(filePath)
             } else {

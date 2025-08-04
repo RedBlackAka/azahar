@@ -173,8 +173,8 @@ void ConfigurePerGame::LoadConfiguration() {
 
     ui->display_filepath->setText(QString::fromStdString(filename));
 
-    ui->display_format->setText(QString::fromStdString(
-        Loader::GetFileTypeString(loader->GetFileType(), loader->IsFileCompressed())));
+    ui->display_format->setText(
+        QString::fromStdString(Loader::GetFileTypeString(loader->GetFileType())));
 
     const auto valueText = ReadableByteSize(FileUtil::GetSize(filename));
     ui->display_size->setText(valueText);
