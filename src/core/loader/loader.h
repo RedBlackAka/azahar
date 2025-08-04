@@ -91,7 +91,6 @@ public:
         std::array<u8, 4> underlying_magic{};
         std::string recommended_compressed_extension;
         std::string recommended_uncompressed_extension;
-        std::unordered_map<std::string, std::vector<u8>> default_metadata;
     };
 
     explicit AppLoader(Core::System& system_, FileUtil::IOFile&& file)

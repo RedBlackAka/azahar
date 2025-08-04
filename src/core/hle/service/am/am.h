@@ -105,15 +105,6 @@ struct ImportContentContext {
 };
 static_assert(sizeof(ImportContentContext) == 0x18, "Invalid ImportContentContext size");
 
-struct TitleInfo {
-    u64_le tid;
-    u64_le size;
-    u16_le version;
-    u16_le unused;
-    u32_le type;
-};
-static_assert(sizeof(TitleInfo) == 0x18, "Title info structure size is wrong");
-
 // Title ID valid length
 constexpr std::size_t TITLE_ID_VALID_LENGTH = 16;
 
@@ -375,11 +366,6 @@ InstallStatus InstallCIA(const std::string& path,
  */
 InstallStatus CheckCIAToInstall(const std::string& path, bool& is_compressed,
                                 bool check_encryption);
-
-/**
- * Get CIA metadata information from file.
- */
-ResultVal<std::pair<TitleInfo, std::unique_ptr<Loader::SMDH>>> GetCIAInfos(const std::string& path);
 
 /**
  * Get the update title ID for a title
