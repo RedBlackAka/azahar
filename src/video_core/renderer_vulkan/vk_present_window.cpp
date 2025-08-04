@@ -1,4 +1,4 @@
-// Copyright Citra Emulator Project / Azahar Emulator Project
+// Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
@@ -98,12 +98,11 @@ bool CanBlitToSwapchain(const vk::PhysicalDevice& physical_device, vk::Format fo
 } // Anonymous namespace
 
 PresentWindow::PresentWindow(Frontend::EmuWindow& emu_window_, const Instance& instance_,
-                             Scheduler& scheduler_, bool low_refresh_rate_)
+                             Scheduler& scheduler_)
     : emu_window{emu_window_}, instance{instance_}, scheduler{scheduler_},
-      low_refresh_rate{low_refresh_rate_},
       surface{CreateSurface(instance.GetInstance(), emu_window)}, next_surface{surface},
       swapchain{instance, emu_window.GetFramebufferLayout().width,
-                emu_window.GetFramebufferLayout().height, surface, low_refresh_rate_},
+                emu_window.GetFramebufferLayout().height, surface},
       graphics_queue{instance.GetGraphicsQueue()}, present_renderpass{CreateRenderpass()},
       vsync_enabled{Settings::values.use_vsync_new.GetValue()},
       blit_supported{
@@ -356,7 +355,7 @@ void PresentWindow::CopyToSwapchain(Frame* frame) {
 #endif
         std::scoped_lock submit_lock{scheduler.submit_mutex};
         graphics_queue.waitIdle();
-        swapchain.Create(frame->width, frame->height, surface, low_refresh_rate);
+        swapchain.Create(frame->width, frame->height, surface);
     };
 
 #ifndef ANDROID

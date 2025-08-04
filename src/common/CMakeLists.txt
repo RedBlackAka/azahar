@@ -167,12 +167,10 @@ if (UNIX AND NOT APPLE)
 endif()
 
 if (APPLE)
-  target_sources(citra_common PUBLIC
-    apple_authorization.h
-    apple_authorization.cpp
-    apple_utils.h
-    apple_utils.mm
-  )
+    target_sources(citra_common PUBLIC
+        apple_authorization.h
+        apple_authorization.cpp
+    )
 endif()
 
 if (MSVC)

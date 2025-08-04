@@ -1,4 +1,4 @@
-// Copyright Citra Emulator Project / Azahar Emulator Project
+// Copyright 2023 Citra Emulator Project
 // Licensed under GPLv2 or any later version
 // Refer to the license.txt file included.
 
@@ -37,7 +37,7 @@ struct Frame {
 class PresentWindow final {
 public:
     explicit PresentWindow(Frontend::EmuWindow& emu_window, const Instance& instance,
-                           Scheduler& scheduler, bool low_refresh_rate);
+                           Scheduler& scheduler);
     ~PresentWindow();
 
     /// Waits for all queued frames to finish presenting.
@@ -74,7 +74,6 @@ private:
     Frontend::EmuWindow& emu_window;
     const Instance& instance;
     Scheduler& scheduler;
-    bool low_refresh_rate;
     vk::SurfaceKHR surface;
     vk::SurfaceKHR next_surface{};
     Swapchain swapchain;
