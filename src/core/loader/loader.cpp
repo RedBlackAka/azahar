@@ -19,7 +19,7 @@ FileType IdentifyFile(FileUtil::IOFile& file) {
     FileType type;
 
 #define CHECK_TYPE(loader)                                                                         \
-    type = AppLoader_##loader::IdentifyType(&file);                                                \
+    type = AppLoader_##loader::IdentifyType(file);                                                 \
     if (FileType::Error != type)                                                                   \
         return type;
 
@@ -48,16 +48,16 @@ FileType GuessFromExtension(const std::string& extension_) {
     if (extension == ".elf" || extension == ".axf")
         return FileType::ELF;
 
-    if (extension == ".cci" || extension == ".zcci")
+    if (extension == ".cci")
         return FileType::CCI;
 
-    if (extension == ".cxi" || extension == ".app" || extension == ".zcxi")
+    if (extension == ".cxi" || extension == ".app")
         return FileType::CXI;
 
-    if (extension == ".3dsx" || extension == ".z3dsx")
+    if (extension == ".3dsx")
         return FileType::THREEDSX;
 
-    if (extension == ".cia" || extension == ".zcia")
+    if (extension == ".cia")
         return FileType::CIA;
 
     return FileType::Unknown;

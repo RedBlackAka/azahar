@@ -9,7 +9,6 @@
 #include <span>
 #include <string>
 #include "common/common_types.h"
-#include "common/file_util.h"
 #include "common/swap.h"
 #include "core/file_sys/ticket.h"
 #include "core/file_sys/title_metadata.h"
@@ -63,7 +62,7 @@ class CIAContainer {
 public:
     // Load whole CIAs outright
     Loader::ResultStatus Load(const FileBackend& backend);
-    Loader::ResultStatus Load(FileUtil::IOFile* file);
+    Loader::ResultStatus Load(const std::string& filepath);
     Loader::ResultStatus Load(std::span<const u8> header_data);
 
     // Load parts of CIAs (for CIAs streamed in)

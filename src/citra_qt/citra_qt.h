@@ -141,7 +141,6 @@ signals:
 
     void UpdateProgress(std::size_t written, std::size_t total);
     void CIAInstallReport(Service::AM::InstallStatus status, QString filepath);
-    void CompressFinished(bool is_compress, bool success);
     void CIAInstallFinished();
     // Signal that tells widgets to update icons to use the current theme
     void UpdateThemedIcons();
@@ -249,7 +248,6 @@ private slots:
     void OnMenuBootHomeMenu(u32 region);
     void OnUpdateProgress(std::size_t written, std::size_t total);
     void OnCIAInstallReport(Service::AM::InstallStatus status, QString filepath);
-    void OnCompressFinished(bool is_compress, bool success);
     void OnCIAInstallFinished();
     void OnMenuRecentFile();
     void OnConfigure();
@@ -283,8 +281,6 @@ private slots:
     void OnSaveMovie();
     void OnCaptureScreenshot();
     void OnDumpVideo();
-    void OnCompressFile();
-    void OnDecompressFile();
 #ifdef _WIN32
     void OnOpenFFmpeg();
 #endif

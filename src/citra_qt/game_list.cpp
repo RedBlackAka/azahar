@@ -1039,10 +1039,8 @@ void GameList::LoadInterfaceLayout() {
 }
 
 const QStringList GameList::supported_file_extensions = {
-    QStringLiteral("3dsx"),  QStringLiteral("elf"),  QStringLiteral("axf"),
-    QStringLiteral("cci"),   QStringLiteral("cxi"),  QStringLiteral("app"),
-    QStringLiteral("z3dsx"), QStringLiteral("zcci"), QStringLiteral("zcxi"),
-};
+    QStringLiteral("3dsx"), QStringLiteral("elf"), QStringLiteral("axf"),
+    QStringLiteral("cci"),  QStringLiteral("cxi"), QStringLiteral("app")};
 
 void GameList::RefreshGameDirectory() {
     if (!UISettings::values.game_dirs.isEmpty() && current_worker != nullptr) {
