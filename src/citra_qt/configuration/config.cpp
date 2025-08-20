@@ -820,7 +820,7 @@ void QtConfig::ReadUIValues() {
         ReadBasicSetting(UISettings::values.save_state_warning);
         ReadBasicSetting(UISettings::values.first_start);
         ReadBasicSetting(UISettings::values.callout_flags);
-        ReadBasicSetting(UISettings::values.toggle_logging);
+        ReadBasicSetting(UISettings::values.enable_logging);
         ReadBasicSetting(UISettings::values.show_console);
         ReadBasicSetting(UISettings::values.pause_when_in_background);
         ReadBasicSetting(UISettings::values.mute_when_in_background);
