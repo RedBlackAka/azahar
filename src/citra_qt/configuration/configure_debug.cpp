@@ -95,6 +95,7 @@ void ConfigureDebug::SetConfiguration() {
     ui->toggle_gdbstub->setChecked(Settings::values.use_gdbstub.GetValue());
     ui->gdbport_spinbox->setEnabled(Settings::values.use_gdbstub.GetValue());
     ui->gdbport_spinbox->setValue(Settings::values.gdbstub_port.GetValue());
+    ui->toggle_logging->setChecked(UISettings::values.enable_logging.GetValue());
     ui->toggle_console->setEnabled(!is_powered_on);
     ui->toggle_console->setChecked(UISettings::values.show_console.GetValue());
     ui->log_filter_edit->setText(QString::fromStdString(Settings::values.log_filter.GetValue()));
@@ -135,6 +136,7 @@ void ConfigureDebug::SetConfiguration() {
 void ConfigureDebug::ApplyConfiguration() {
     Settings::values.use_gdbstub = ui->toggle_gdbstub->isChecked();
     Settings::values.gdbstub_port = static_cast<u16>(ui->gdbport_spinbox->value());
+    UISettings::values.enable_logging = ui->toggle_logging->isChecked();
     UISettings::values.show_console = ui->toggle_console->isChecked();
     Settings::values.log_filter = ui->log_filter_edit->text().toStdString();
     Settings::values.log_regex_filter = ui->log_regex_filter_edit->text().toStdString();

@@ -72,6 +72,16 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
+        <widget class="QCheckBox" name="toggle_logging">
+          <property name="text">
+            <string>Enable logging</string>
+          </property>
+          <property name="toolTip">
+            <string>&lt;html&gt;&lt;body&gt;Controls whether logging is initialized and log files are created.&lt;br&gt;Enabling this feature will decrease performance, only use it for debugging purposes.&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+        </widget>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="label">

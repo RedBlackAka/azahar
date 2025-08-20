@@ -179,8 +179,10 @@ bool IsPrerelease() {
 GMainWindow::GMainWindow(Core::System& system_)
     : ui{std::make_unique<Ui::MainWindow>()}, system{system_}, movie{system.Movie()},
       user_data_migrator{this}, config{std::make_unique<QtConfig>()}, emu_thread{nullptr} {
-    Common::Log::Initialize();
-    Common::Log::Start();
+    if (UISettings::values.enable_logging) {
+        Common::Log::Initialize();
+        Common::Log::Start();
+    }
 
     Debugger::ToggleConsole();
 

@@ -147,6 +147,7 @@ struct Values {
     bool multiplayer_filter_hide_full;
 
     // logging
+    Settings::Setting<bool> enable_logging{true, "EnableLogging"};
     Settings::Setting<bool> show_console{false, "showConsole"};
 
     bool shortcut_already_warned = false;
