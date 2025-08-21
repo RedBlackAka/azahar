@@ -182,9 +182,9 @@ GMainWindow::GMainWindow(Core::System& system_)
     if (UISettings::values.enable_logging) {
         Common::Log::Initialize();
         Common::Log::Start();
+        
+        Debugger::ToggleConsole();
     }
-
-    Debugger::ToggleConsole();
 
     QStringList args = QApplication::arguments();
     QString game_path;
