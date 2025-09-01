@@ -162,7 +162,7 @@ public:
 
     GameListItemPath() = default;
     GameListItemPath(const QString& game_path, std::span<const u8> smdh_data, u64 program_id,
-                     u64 extdata_id, Service::FS::MediaType media_type, bool is_encrypted) {
+                     u64 extdata_id, Service::FS::MediaType media_type) {
         setData(type(), TypeRole);
         setData(game_path, FullPathRole);
         setData(qulonglong(program_id), ProgramIdRole);
@@ -183,9 +183,6 @@ public:
             if (UISettings::values.game_list_icon_size.GetValue() !=
                 UISettings::GameListIconSize::NoIcon)
                 setData(GetDefaultIcon(large), Qt::DecorationRole);
-            if (is_encrypted) {
-                setData(QObject::tr("Unsupported encrypted application"), TitleRole);
-            }
             return;
         }
 

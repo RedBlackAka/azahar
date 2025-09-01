@@ -138,11 +138,6 @@ void NCCHCryptoFile::Write(const u8* buffer, std::size_t length) {
         }
 
         if (!ncch_header.no_crypto) {
-            if (!decryption_authorized) {
-                LOG_ERROR(Service_AM, "Blocked unauthorized encrypted CIA installation.");
-                is_error = true;
-                return;
-            }
             is_encrypted = true;
 
             // Find primary and secondary keys
@@ -569,14 +564,6 @@ ResultVal<std::size_t> CIAFile::WriteContentData(u64 offset, std::size_t length,
                                  buffer + (range_min - offset) + available_to_write);
 
             if ((tmd.GetContentTypeByIndex(i) & FileSys::TMDContentTypeFlag::Encrypted) != 0) {
-                if (!decryption_authorized) {
-                    LOG_ERROR(Service_AM, "Blocked unauthorized encrypted CIA installation.");
-                    current_content_install_result.result =
-                        Result(ErrorDescription::NotAuthorized, ErrorModule::AM,
-                               ErrorSummary::InvalidState, ErrorLevel::Permanent);
-                    install_results.push_back(current_content_install_result);
-                    return current_content_install_result.result;
-                }
                 decryption_state->content[i].ProcessData(temp.data(), temp.data(), temp.size());
             }
 
@@ -700,23 +687,17 @@ Result CIAFile::PrepareToImportContent(const FileSys::TitleMetadata& tmd) {
 
     if (container.GetTitleMetadata().HasEncryptedContent(from_cdn ? nullptr
                                                                   : container.GetHeader())) {
-        if (!decryption_authorized) {
-            LOG_ERROR(Service_AM, "Blocked unauthorized encrypted CIA installation.");
-            return {ErrorDescription::NotAuthorized, ErrorModule::AM, ErrorSummary::InvalidState,
-                    ErrorLevel::Permanent};
-        } else {
-            if (auto title_key = container.GetTicket().GetTitleKey()) {
+        if (auto title_key = container.GetTicket().GetTitleKey()) {
                 decryption_state->content.resize(content_count);
                 for (std::size_t i = 0; i < content_count; ++i) {
                     auto ctr = tmd.GetContentCTRByIndex(i);
                     decryption_state->content[i].SetKeyWithIV(title_key->data(), title_key->size(),
                                                               ctr.data());
                 }
-            } else {
-                LOG_ERROR(Service_AM, "Could not read title key from ticket for encrypted CIA.");
-                // TODO: Correct error code.
-                return FileSys::ResultFileNotFound;
-            }
+        } else {
+            LOG_ERROR(Service_AM, "Could not read title key from ticket for encrypted CIA.");
+            // TODO: Correct error code.
+            return FileSys::ResultFileNotFound;
         }
     } else {
         LOG_INFO(Service_AM,
@@ -805,14 +786,6 @@ ResultVal<std::size_t> CIAFile::WriteContentDataIndexed(u16 content_index, u64 o
     std::vector<u8> temp(buffer, buffer + std::min(static_cast<u64>(length), remaining_to_write));
 
     if ((tmd.GetContentTypeByIndex(content_index) & FileSys::TMDContentTypeFlag::Encrypted) != 0) {
-        if (!decryption_authorized) {
-            LOG_ERROR(Service_AM, "Blocked unauthorized encrypted CIA installation.");
-            current_content_install_result.result =
-                Result(ErrorDescription::NotAuthorized, ErrorModule::AM, ErrorSummary::InvalidState,
-                       ErrorLevel::Permanent);
-            install_results.push_back(current_content_install_result);
-            return current_content_install_result.result;
-        }
         decryption_state->content[content_index].ProcessData(temp.data(), temp.data(), temp.size());
     }
 
@@ -1067,8 +1040,10 @@ InstallStatus InstallCIA(const std::string& path,
             Core::System::GetInstance(),
             Service::AM::GetTitleMediaType(container.GetTitleMetadata().GetTitleID()));
 
-        if (container.GetTitleMetadata().HasEncryptedContent(container.GetHeader())) {
-            LOG_ERROR(Service_AM, "File {} is encrypted! Aborting...", path);
+        bool title_key_available = container.GetTicket().GetTitleKey().has_value();
+        if (!title_key_available && container.GetTitleMetadata().HasEncryptedContent()) {
+            LOG_ERROR(Service_AM, "File {} is encrypted and no title key is available! Aborting...",
+                      path);
             return InstallStatus::ErrorEncrypted;
         }
 
