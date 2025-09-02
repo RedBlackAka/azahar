@@ -360,6 +360,13 @@ InstallStatus InstallCIA(const std::string& path,
                          std::function<ProgressCallback>&& update_callback = nullptr);
 
 /**
+ * Downloads and installs title form the Nintendo Update Service.
+ * @param title_id the title_id to download
+ * @returns  whether the install was successful or error code
+ */
+InstallStatus InstallFromNus(u64 title_id, int version = -1);
+
+/**
  * Get the update title ID for a title
  * @param titleId the title ID
  * @returns The update title ID

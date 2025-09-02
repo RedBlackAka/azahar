@@ -60,6 +60,8 @@ private:
 
     void SetupPerGameUI();
 
+    void DownloadFromNUS();
+
 private:
     std::unique_ptr<Ui::ConfigureSystem> ui;
     Core::System& system;

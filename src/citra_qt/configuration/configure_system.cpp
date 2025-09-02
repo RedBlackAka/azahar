@@ -237,6 +237,8 @@ ConfigureSystem::ConfigureSystem(Core::System& system_, QWidget* parent)
             &ConfigureSystem::UpdateInitTicks);
     connect(ui->button_regenerate_console_id, &QPushButton::clicked, this,
             &ConfigureSystem::RefreshConsoleID);
+    connect(ui->button_start_download, &QPushButton::clicked, this,
+            &ConfigureSystem::DownloadFromNUS);
     connect(ui->button_regenerate_mac, &QPushButton::clicked, this, &ConfigureSystem::RefreshMAC);
     connect(ui->button_unlink_console, &QPushButton::clicked, this,
             &ConfigureSystem::UnlinkConsole);
@@ -292,6 +294,34 @@ ConfigureSystem::ConfigureSystem(Core::System& system_, QWidget* parent)
     ui->label_country_invalid->setStyleSheet(QStringLiteral("QLabel { color: #ff3333; }"));
 
     SetupPerGameUI();
+
+    ui->combo_download_set->setCurrentIndex(0);    // set to Minimal
+    ui->combo_download_region->setCurrentIndex(0); // set to the base region
+
+    HW::AES::InitKeys(true);
+    bool keys_available = HW::AES::IsKeyXAvailable(HW::AES::KeySlotID::NCCHSecure1) &&
+                          HW::AES::IsKeyXAvailable(HW::AES::KeySlotID::NCCHSecure2);
+    for (u8 i = 0; i < HW::AES::MaxCommonKeySlot && keys_available; i++) {
+        HW::AES::SelectCommonKeyIndex(i);
+        if (!HW::AES::IsNormalKeyAvailable(HW::AES::KeySlotID::TicketCommonKey)) {
+            keys_available = false;
+            break;
+        }
+    }
+    if (keys_available) {
+        ui->button_start_download->setEnabled(true);
+        ui->combo_download_set->setEnabled(true);
+        ui->combo_download_region->setEnabled(true);
+        ui->label_nus_download->setText(tr("Download System Files from Nintendo servers"));
+    } else {
+        ui->button_start_download->setEnabled(false);
+        ui->combo_download_set->setEnabled(false);
+        ui->combo_download_region->setEnabled(false);
+        ui->label_nus_download->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        ui->label_nus_download->setOpenExternalLinks(true);
+        ui->label_nus_download->setText(tr("Azahar is missing keys to download system files."));
+    }
+
     ConfigureTime();
 }
 
@@ -390,6 +420,9 @@ void ConfigureSystem::ReadSystemSettings() {
     // set play coin
     play_coin = Service::PTM::Module::GetPlayCoins();
     ui->spinBox_play_coins->setValue(play_coin);
+
+    // set firmware download region
+    ui->combo_download_region->setCurrentIndex(static_cast<int>(cfg->GetRegionValue(false)));
 
     // Refresh secure data status
     RefreshSecureDataStatus();
@@ -747,6 +780,9 @@ void ConfigureSystem::SetupPerGameUI() {
     ui->label_plugin_loader->setVisible(false);
     ui->plugin_loader->setVisible(false);
     ui->allow_plugin_loader->setVisible(false);
+    // Disable the system firmware downloader.
+    ui->label_nus_download->setVisible(false);
+    ui->body_nus_download->setVisible(false);
     ui->group_real_console_unique_data->setVisible(false);
 
     ConfigurationShared::SetColoredTristate(ui->toggle_new_3ds, Settings::values.is_new_3ds,
@@ -759,4 +795,45 @@ void ConfigureSystem::SetupPerGameUI() {
     ConfigurationShared::SetColoredComboBox(
         ui->region_combobox, ui->region_label,
         static_cast<u32>(Settings::values.region_value.GetValue(true) + 1));
+}
+
+void ConfigureSystem::DownloadFromNUS() {
+    ui->button_start_download->setEnabled(false);
+
+    const auto mode =
+        static_cast<Core::SystemTitleSet>(1 << ui->combo_download_set->currentIndex());
+    const auto region = static_cast<u32>(ui->combo_download_region->currentIndex());
+    const std::vector<u64> titles = Core::GetSystemTitleIds(mode, region);
+
+    QProgressDialog progress(tr("Downloading files..."), tr("Cancel"), 0,
+                             static_cast<int>(titles.size()), this);
+    progress.setWindowModality(Qt::WindowModal);
+
+    QFutureWatcher<void> future_watcher;
+    QObject::connect(&future_watcher, &QFutureWatcher<void>::finished, &progress,
+                     &QProgressDialog::reset);
+    QObject::connect(&progress, &QProgressDialog::canceled, &future_watcher,
+                     &QFutureWatcher<void>::cancel);
+    QObject::connect(&future_watcher, &QFutureWatcher<void>::progressValueChanged, &progress,
+                     &QProgressDialog::setValue);
+
+    auto failed = false;
+    const auto download_title = [&future_watcher, &failed](const u64& title_id) {
+        if (Service::AM::InstallFromNus(title_id) != Service::AM::InstallStatus::Success) {
+            failed = true;
+            future_watcher.cancel();
+        }
+    };
+
+    future_watcher.setFuture(QtConcurrent::map(titles, download_title));
+    progress.exec();
+    future_watcher.waitForFinished();
+
+    if (failed) {
+        QMessageBox::critical(this, tr("Azahar"), tr("Downloading system files failed."));
+    } else if (!future_watcher.isCanceled()) {
+        QMessageBox::information(this, tr("Azahar"), tr("Successfully downloaded system files."));
+    }
+
+    ui->button_start_download->setEnabled(true);
 }
