@@ -415,7 +415,7 @@ void AuthorizeCIAFileDecryption(CIAFile* cia_file, Kernel::HLERequestContext& ct
 }
 
 CIAFile::CIAFile(Core::System& system_, Service::FS::MediaType media_type, bool from_cdn_)
-    : system(system_), from_cdn(from_cdn_), decryption_authorized(false), media_type(media_type),
+    : system(system_), from_cdn(from_cdn_), decryption_authorized(true), media_type(media_type),
       decryption_state(std::make_unique<DecryptionState>()) {
     // If data is being installing from CDN, provide a fake header to the container so that
     // it's not uninitialized.
@@ -924,6 +924,12 @@ bool TicketFile::SetSize(u64 size) const {
 }
 
 bool TicketFile::Close() {
+    FileSys::Ticket ticket;
+    if (ticket.Load(data, 0) == Loader::ResultStatus::Success) {
+        LOG_WARNING(Service_AM, "Discarding ticket for {:#016X}.", ticket.GetTitleID());
+    } else {
+        LOG_ERROR(Service_AM, "Invalid ticket provided to TicketFile.");
+    }
     return true;
 }
 
@@ -940,6 +946,11 @@ Result TicketFile::Commit() {
         title_id = ticket.GetTitleID();
         ticket_id = ticket.GetTicketID();
         const auto ticket_path = GetTicketPath(ticket.GetTitleID(), ticket.GetTicketID());
+
+        // Create ticket folder if it does not exist
+        std::string ticket_folder;
+        Common::SplitPath(ticket_path, &ticket_folder, nullptr, nullptr);
+        FileUtil::CreateFullPath(ticket_folder);
 
         // Save ticket
         if (ticket.Save(ticket_path) != Loader::ResultStatus::Success) {
@@ -3952,6 +3963,7 @@ void Module::Interface::EndImportTitle(Kernel::HLERequestContext& ctx) {
     }
 
     am->importing_title->cia_file.SetDone();
+    am->ScanForTitles(am->importing_title->media_type);
     am->importing_title.reset();
 
     IPC::RequestBuilder rb = rp.MakeBuilder(1, 0);
@@ -4384,6 +4396,7 @@ void Module::serialize(Archive& ar, const unsigned int) {
     ar & cia_installing;
     ar & force_old_device_id;
     ar & force_new_device_id;
+    ar & am_title_list;
     ar & system_updater_mutex;
 }
 SERIALIZE_IMPL(Module)

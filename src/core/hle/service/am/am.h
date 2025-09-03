@@ -244,6 +244,7 @@ private:
     std::vector<std::string> content_file_paths;
     u16 current_content_index = -1;
     std::unique_ptr<NCCHCryptoFile> current_content_file;
+    std::vector<FileUtil::IOFile> content_files;
     InstallResult current_content_install_result{};
     std::vector<InstallResult> install_results;
     Service::FS::MediaType media_type;
