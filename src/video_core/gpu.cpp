@@ -18,6 +18,7 @@
 #include "video_core/renderer_base.h"
 #include "video_core/renderer_software/sw_blitter.h"
 #include "video_core/right_eye_disabler.h"
+#include "video_core/shader_notify.h"
 #include "video_core/video_core.h"
 
 namespace VideoCore {
@@ -30,7 +31,8 @@ MICROPROFILE_DEFINE(GPU_CmdlistProcessing, "GPU", "Cmdlist Processing", MP_RGB(1
 
 GPU::GPU(Core::System& system, Frontend::EmuWindow& emu_window,
          Frontend::EmuWindow* secondary_window)
-    : right_eye_disabler{std::make_unique<RightEyeDisabler>(*this)},
+    : shader_notify{std::make_unique<VideoCore::ShaderNotify>()},
+      right_eye_disabler{std::make_unique<RightEyeDisabler>(*this)},
       impl{std::make_unique<Impl>(system, emu_window, secondary_window)} {
     impl->vblank_event = impl->timing.RegisterEvent(
         "GPU::VBlankCallback",
@@ -293,6 +295,14 @@ void GPU::WriteReg(VAddr addr, u32 data) {
 
 VideoCore::RendererBase& GPU::Renderer() {
     return *impl->renderer;
+}
+
+VideoCore::ShaderNotify& GPU::ShaderNotify() {
+    return *shader_notify;
+}
+
+const VideoCore::ShaderNotify& GPU::ShaderNotify() const {
+    return *shader_notify;
 }
 
 Pica::PicaCore& GPU::PicaCore() {

@@ -113,6 +113,7 @@
 #include "ui_main.h"
 #include "video_core/gpu.h"
 #include "video_core/renderer_base.h"
+#include "video_core/shader_notify.h"
 
 #ifdef __APPLE__
 #include "common/apple_authorization.h"
@@ -522,6 +523,9 @@ void GMainWindow::InitializeWidgets() {
     message_label->setAlignment(Qt::AlignLeft);
     statusBar()->addPermanentWidget(message_label, 1);
 
+    shader_building_label = new QLabel();
+    shader_building_label->setToolTip(tr("The amount of shaders currently being built"));
+
     progress_bar = new QProgressBar();
     progress_bar->hide();
     statusBar()->addPermanentWidget(progress_bar);
@@ -543,8 +547,8 @@ void GMainWindow::InitializeWidgets() {
         tr("Time taken to emulate a 3DS frame, not counting framelimiting or v-sync. For "
            "full-speed emulation this should be at most 16.67 ms."));
 
-    for (auto& label : {loading_shaders_label, artic_traffic_label, emu_speed_label, game_fps_label,
-                        emu_frametime_label}) {
+    for (auto& label : {loading_shaders_label, shader_building_label, artic_traffic_label,
+                        emu_speed_label, game_fps_label, emu_frametime_label}) {
         label->setVisible(false);
         label->setFrameStyle(QFrame::NoFrame);
         label->setContentsMargins(4, 0, 4, 0);
@@ -1586,6 +1590,7 @@ void GMainWindow::ShutdownGame() {
     message_label_used_for_movie = false;
     show_artic_label = false;
     loading_shaders_label->setVisible(false);
+    shader_building_label->setVisible(false);
     artic_traffic_label->setVisible(false);
     emu_speed_label->setVisible(false);
     game_fps_label->setVisible(false);
@@ -3513,6 +3518,15 @@ void GMainWindow::UpdateStatusBar() {
     }
 
     auto results = system.GetAndResetPerfStats();
+    auto& shader_notify = system.GPU().ShaderNotify();
+    const int shaders_building = shader_notify.ShadersBuilding();
+
+    if (shaders_building > 0) {
+        shader_building_label->setText(tr("Building: %n shader(s)", "", shaders_building));
+        shader_building_label->setVisible(true);
+    } else {
+        shader_building_label->setVisible(false);
+    }
 
     if (show_artic_label) {
         const bool do_mb = results.artic_transmitted >= (1000.0 * 1000.0);

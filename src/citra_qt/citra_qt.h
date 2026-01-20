@@ -351,6 +351,7 @@ private:
     QLabel* message_label = nullptr;
     bool show_artic_label = false;
     QLabel* loading_shaders_label = nullptr;
+    QLabel* shader_building_label = nullptr;
     QLabel* artic_traffic_label = nullptr;
     QLabel* emu_speed_label = nullptr;
     QLabel* game_fps_label = nullptr;

@@ -37,6 +37,7 @@ constexpr u64 FRAME_TICKS = 4481136ull;
 
 class GraphicsDebugger;
 class RendererBase;
+class ShaderNotify;
 class RightEyeDisabler;
 
 /**
@@ -78,6 +79,12 @@ public:
     /// Returns a mutable reference to the renderer.
     [[nodiscard]] VideoCore::RendererBase& Renderer();
 
+    /// Returns a reference to the shader notifier.
+    [[nodiscard]] VideoCore::ShaderNotify& ShaderNotify();
+
+    /// Returns a const reference to the shader notifier.
+    [[nodiscard]] const VideoCore::ShaderNotify& ShaderNotify() const;
+
     /// Returns a mutable reference to the PICA GPU.
     [[nodiscard]] Pica::PicaCore& PicaCore();
 
@@ -110,6 +117,7 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const u32 file_version);
 
+    std::unique_ptr<VideoCore::ShaderNotify> shader_notify;
     std::unique_ptr<RightEyeDisabler> right_eye_disabler;
 
 private:
