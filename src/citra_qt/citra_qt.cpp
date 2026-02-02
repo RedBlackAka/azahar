@@ -3998,22 +3998,22 @@ void GMainWindow::UpdateUITheme() {
 }
 
 void GMainWindow::LoadTranslation() {
-    bool loaded{false};
+    // If the selected language is English, no need to install any translation
+    if (UISettings::values.language == QStringLiteral("en")) {
+        return;
+    }
 
-    if (UISettings::values.language.isEmpty() && !loaded) {
+    bool loaded;
+
+    if (UISettings::values.language.isEmpty()) {
         // Use the system's default locale
-        const auto languages = QLocale::system().uiLanguages(QLocale::TagSeparator::Underscore);
+        const auto languages =
+            QLocale::system().uiLanguages(QLocale::TagSeparator::Underscore);
+
         for (const auto& lang : languages) {
-            // If the first language found is English, no need to install any translation
-            if (lang == QStringLiteral("en")) {
-                UISettings::values.language = lang;
-                return;
-            }
             loaded = translator.load(lang, QStringLiteral(":/languages/"));
-            if (loaded) {
-                UISettings::values.language = lang;
+            if (loaded)
                 break;
-            }
         }
     } else {
         // Otherwise load from the specified file
