@@ -4003,11 +4003,14 @@ void GMainWindow::LoadTranslation() {
         return;
     }
 
-    bool loaded{false};
+    bool loaded;
 
-    if (UISettings::values.language.isEmpty() && !loaded) {
+    if (UISettings::values.language.isEmpty()) {
         // Use the system's default locale
-        loaded = translator.load(QLocale::system().uiLanguages(QLocale::TagSeparator::Underscore), {}, {}, QStringLiteral(":/languages/"));
+        const auto languages = QLocale::system().uiLanguages(QLocale::TagSeparator::Underscore);
+        for (const auto& lang : languages) {
+            loaded = translator.load(lang, QStringLiteral(":/languages/"));
+        }
     } else {
         // Otherwise load from the specified file
         loaded = translator.load(UISettings::values.language, QStringLiteral(":/languages/"));
