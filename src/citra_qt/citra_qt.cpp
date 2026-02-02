@@ -4015,9 +4015,6 @@ void GMainWindow::LoadTranslation() {
                 break;
             }
         }
-    } else {
-        // Otherwise load from the specified file
-        loaded = translator.load(UISettings::values.language, QStringLiteral(":/languages/"));
     }
 
     if (loaded) {
