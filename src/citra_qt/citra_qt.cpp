@@ -4003,9 +4003,9 @@ void GMainWindow::LoadTranslation() {
         return;
     }
 
-    bool loaded;
+    bool loaded{false};
 
-    if (UISettings::values.language.isEmpty()) {
+    if (UISettings::values.language.isEmpty() && !loaded) {
         // Use the system's default locale
         const auto languages = QLocale::system().uiLanguages(QLocale::TagSeparator::Underscore);
         for (const auto& lang : languages) {
