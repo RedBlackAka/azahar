@@ -4003,7 +4003,7 @@ void GMainWindow::LoadTranslation() {
         return;
     }
 
-    bool loaded;
+    bool loaded = false;
 
     if (UISettings::values.language.isEmpty()) {
         // Use the system's default locale
