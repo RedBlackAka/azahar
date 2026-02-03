@@ -4008,7 +4008,7 @@ void GMainWindow::LoadTranslation() {
     if (UISettings::values.language.isEmpty()) {
         // Use the system's default locale
         const auto languages =
-            QLocale::system().uiLanguages(QLocale::TagSeparator::Underscore);
+            QLocale::system().uiLanguages();
 
         for (const auto& lang : languages) {
             loaded = translator.load(lang, {}, {}, QStringLiteral(":/languages/"));
