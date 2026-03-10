@@ -9,7 +9,7 @@
 #include "common/common_paths.h"
 #include "common/file_util.h"
 #include "common/string_util.h"
-#include "video_core/renderer_opengl/post_processing_opengl.h"
+#include "video_core/post_processing.h"
 
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>

@@ -46,6 +46,8 @@ add_library(video_core STATIC
     pica/packed_attribute.h
     pica/vertex_loader.cpp
     pica/vertex_loader.h
+    post_processing.cpp
+    post_processing.h
     rasterizer_cache/framebuffer_base.h
     rasterizer_cache/pixel_format.cpp
     rasterizer_cache/pixel_format.h
@@ -148,8 +150,6 @@ if (ENABLE_OPENGL)
         renderer_opengl/gl_vars.cpp
         renderer_opengl/gl_vars.h
         renderer_opengl/pica_to_gl.h
-        renderer_opengl/post_processing_opengl.cpp
-        renderer_opengl/post_processing_opengl.h
         renderer_opengl/renderer_opengl.cpp
         renderer_opengl/renderer_opengl.h
     )

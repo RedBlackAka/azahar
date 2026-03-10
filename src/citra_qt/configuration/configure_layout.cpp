@@ -9,8 +9,8 @@
 #include "citra_qt/configuration/configure_layout_cycle.h"
 #include "common/settings.h"
 #include "ui_configure_layout.h"
-#ifdef ENABLE_OPENGL
-#include "video_core/renderer_opengl/post_processing_opengl.h"
+#if defined(ENABLE_OPENGL) || defined(ENABLE_VULKAN)
+#include "video_core/post_processing.h"
 #endif
 
 ConfigureLayout::ConfigureLayout(QWidget* parent)

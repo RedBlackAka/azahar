@@ -7,8 +7,8 @@
 #include "citra_qt/configuration/configure_enhancements.h"
 #include "common/settings.h"
 #include "ui_configure_enhancements.h"
-#ifdef ENABLE_OPENGL
-#include "video_core/renderer_opengl/post_processing_opengl.h"
+#if defined(ENABLE_OPENGL) || defined(ENABLE_VULKAN)
+#include "video_core/post_processing.h"
 #endif
 
 ConfigureEnhancements::ConfigureEnhancements(QWidget* parent)
@@ -94,14 +94,12 @@ void ConfigureEnhancements::updateShaders(Settings::StereoRenderOption stereo_op
 
     ui->shader_combobox->setCurrentIndex(0);
 
-#ifdef ENABLE_OPENGL
     for (const auto& shader : OpenGL::GetPostProcessingShaderList(
              stereo_option == Settings::StereoRenderOption::Anaglyph)) {
         ui->shader_combobox->addItem(QString::fromStdString(shader));
         if (current_shader == shader)
             ui->shader_combobox->setCurrentIndex(ui->shader_combobox->count() - 1);
     }
-#endif
 }
 
 void ConfigureEnhancements::RetranslateUI() {

@@ -10,9 +10,9 @@
 #include "core/frontend/framebuffer_layout.h"
 #include "core/memory.h"
 #include "video_core/pica/pica_core.h"
+#include "video_core/post_processing.h"
 #include "video_core/renderer_opengl/gl_state.h"
 #include "video_core/renderer_opengl/gl_texture_mailbox.h"
-#include "video_core/renderer_opengl/post_processing_opengl.h"
 #include "video_core/renderer_opengl/renderer_opengl.h"
 #include "video_core/shader/generator/glsl_shader_gen.h"
 

@@ -11,6 +11,7 @@
 #include "core/frontend/emu_window.h"
 #include "video_core/gpu.h"
 #include "video_core/pica/pica_core.h"
+#include "video_core/post_processing.h"
 #include "video_core/renderer_vulkan/renderer_vulkan.h"
 #include "video_core/renderer_vulkan/vk_memory_util.h"
 #include "video_core/renderer_vulkan/vk_shader_util.h"
@@ -717,10 +718,32 @@ void RendererVulkan::FillScreen(Common::Vec3<u8> color, const TextureInfo& textu
 void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
     switch (render_3d) {
     case Settings::StereoRenderOption::Anaglyph:
+        if (Settings::values.anaglyph_shader_name.GetValue() == "Dubois (builtin)") {
+            shader_data += HostShaders::VULKAN_PRESENT_ANAGLYPH_FRAG;
+        } else {
+            std::string shader_text = OpenGL::GetPostProcessingShaderCode(
+                true, Settings::values.anaglyph_shader_name.GetValue());
+            if (shader_text.empty()) {
+                // Should probably provide some information that the shader couldn't load
+                shader_data += HostShaders::VULKAN_PRESENT_ANAGLYPH_FRAG;
+            } else {
+                shader_data += shader_text;
+            }
         current_pipeline = 1;
         break;
     case Settings::StereoRenderOption::Interlaced:
     case Settings::StereoRenderOption::ReverseInterlaced:
+        if (Settings::values.pp_shader_name.GetValue() == "None (builtin)") {
+            shader_data += HostShaders::VULKAN_PRESENT_FRAG;
+        } else {
+            std::string shader_text = OpenGL::GetPostProcessingShaderCode(
+                false, Settings::values.pp_shader_name.GetValue());
+            if (shader_text.empty()) {
+                // Should probably provide some information that the shader couldn't load
+                shader_data += HostShaders::VULKAN_PRESENT_FRAG;
+            } else {
+                shader_data += shader_text;
+            }
         current_pipeline = 2;
         draw_info.reverse_interlaced = render_3d == Settings::StereoRenderOption::ReverseInterlaced;
         break;
