@@ -716,6 +716,7 @@ void RendererVulkan::FillScreen(Common::Vec3<u8> color, const TextureInfo& textu
 }
 
 void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
+    std::string shader_data = fragment_shader_precision_OES;
     switch (render_3d) {
     case Settings::StereoRenderOption::Anaglyph:
         if (Settings::values.anaglyph_shader_name.GetValue() == "Dubois (builtin)") {
