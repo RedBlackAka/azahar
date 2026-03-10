@@ -94,6 +94,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QCheckBox" name="toggle_preload_game">
+          <property name="text">
+           <string>Preload game to RAM (improves HDD performance)</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>

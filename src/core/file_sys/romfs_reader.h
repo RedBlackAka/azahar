@@ -139,7 +139,44 @@ private:
     friend class boost::serialization::access;
 };
 
+/**
+ * A RomFS reader that preloads the entire file into memory.
+ * This improves performance on HDDs by eliminating file seeks.
+ */
+class MemoryRomFSReader : public RomFSReader {
+public:
+    MemoryRomFSReader(std::unique_ptr<FileUtil::IOFile>&& file, std::size_t file_offset,
+                      std::size_t data_size);
+
+    ~MemoryRomFSReader() override = default;
+
+    std::size_t GetSize() const override {
+        return data_size;
+    }
+
+    std::size_t ReadFile(std::size_t offset, std::size_t length, u8* buffer) override;
+
+    bool AllowsCachedReads() const override;
+
+    bool CacheReady(std::size_t file_offset, std::size_t length) override;
+
+private:
+    std::vector<u8> data;
+    std::size_t data_size;
+
+    MemoryRomFSReader() = default;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int) {
+        ar& boost::serialization::base_object<RomFSReader>(*this);
+        ar & data;
+        ar & data_size;
+    }
+    friend class boost::serialization::access;
+};
+
 } // namespace FileSys
 
 BOOST_CLASS_EXPORT_KEY(FileSys::DirectRomFSReader)
 BOOST_CLASS_EXPORT_KEY(FileSys::ArticRomFSReader)
+BOOST_CLASS_EXPORT_KEY(FileSys::MemoryRomFSReader)

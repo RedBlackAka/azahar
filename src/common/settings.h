@@ -609,6 +609,7 @@ struct Values {
     SwitchableSetting<bool> custom_textures{false, Keys::custom_textures};
     SwitchableSetting<bool> preload_textures{false, Keys::preload_textures};
     SwitchableSetting<bool> async_custom_loading{true, Keys::async_custom_loading};
+    SwitchableSetting<bool> preload_game_to_ram{false, Keys::preload_game_to_ram};
     SwitchableSetting<bool> disable_right_eye_render{false, Keys::disable_right_eye_render};
 
     // Audio

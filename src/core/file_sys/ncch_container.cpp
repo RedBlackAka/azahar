@@ -19,6 +19,7 @@
 #include "core/hw/aes/key.h"
 #include "core/hw/unique_data.h"
 #include "core/loader/loader.h"
+#include "common/settings.h"
 
 namespace FileSys {
 
@@ -643,8 +644,16 @@ Loader::ResultStatus NCCHContainer::ReadRomFS(std::shared_ptr<RomFSReader>& romf
     if (!romfs_file_inner->IsOpen())
         return Loader::ResultStatus::Error;
 
-    std::shared_ptr<RomFSReader> direct_romfs =
-        std::make_shared<DirectRomFSReader>(std::move(romfs_file_inner), romfs_offset, romfs_size);
+    std::shared_ptr<RomFSReader> direct_romfs;
+
+    // Use MemoryRomFSReader if the setting is enabled, otherwise use DirectRomFSReader
+    if (Settings::values.preload_game_to_ram.GetValue()) {
+        direct_romfs =
+            std::make_shared<MemoryRomFSReader>(std::move(romfs_file_inner), romfs_offset, romfs_size);
+    } else {
+        direct_romfs =
+            std::make_shared<DirectRomFSReader>(std::move(romfs_file_inner), romfs_offset, romfs_size);
+    }
 
     const auto path =
         fmt::format("{}mods/{:016X}/", FileUtil::GetUserPath(FileUtil::UserPath::LoadDir),
