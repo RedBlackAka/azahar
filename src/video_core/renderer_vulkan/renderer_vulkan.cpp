@@ -757,8 +757,6 @@ void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
         break;
     }
     shader.Create(HostShaders::VULKAN_PRESENT_VERT, shader_data);
-    state.draw.shader_program = shader.handle;
-    state.Apply();
 }
 
 void RendererVulkan::DrawSingleScreen(u32 screen_id, float x, float y, float w, float h,
