@@ -756,7 +756,6 @@ void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
         current_pipeline = 0;
         break;
     }
-    shader.Create(HostShaders::VULKAN_PRESENT_VERT, shader_data);
 }
 
 void RendererVulkan::DrawSingleScreen(u32 screen_id, float x, float y, float w, float h,
