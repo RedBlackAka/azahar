@@ -10,6 +10,7 @@
 #include <cryptopp/sha.h>
 #include "common/common_types.h"
 #include "common/logging/log.h"
+#include "common/settings.h"
 #include "common/zstd_compression.h"
 #include "core/core.h"
 #include "core/file_sys/layered_fs.h"
@@ -19,7 +20,6 @@
 #include "core/hw/aes/key.h"
 #include "core/hw/unique_data.h"
 #include "core/loader/loader.h"
-#include "common/settings.h"
 
 namespace FileSys {
 
