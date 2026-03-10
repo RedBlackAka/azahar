@@ -94,7 +94,7 @@ void ConfigureEnhancements::updateShaders(Settings::StereoRenderOption stereo_op
 
     ui->shader_combobox->setCurrentIndex(0);
 
-    for (const auto& shader : OpenGL::GetPostProcessingShaderList(
+    for (const auto& shader : PostProcessShader::GetPostProcessingShaderList(
              stereo_option == Settings::StereoRenderOption::Anaglyph)) {
         ui->shader_combobox->addItem(QString::fromStdString(shader));
         if (current_shader == shader)
