@@ -129,7 +129,7 @@ void LogSettings() {
     log_setting("Utility_CustomTextures", values.custom_textures.GetValue());
     log_setting("Utility_PreloadTextures", values.preload_textures.GetValue());
     log_setting("Utility_AsyncCustomLoading", values.async_custom_loading.GetValue());
-    log_setting("Utility_PreloadGameToRAM", values.preload_game_to_ram.GetValue());
+    log_setting("Utility_PreloadToRAM", values.preload_to_ram.GetValue());
     log_setting("Utility_UseDiskShaderCache", values.use_disk_shader_cache.GetValue());
     log_setting("Audio_Emulation", GetAudioEmulationName(values.audio_emulation.GetValue()));
     log_setting("Audio_OutputType", values.output_type.GetValue());
@@ -237,7 +237,7 @@ void RestoreGlobalState(bool is_powered_on) {
     values.dump_textures.SetGlobal(true);
     values.custom_textures.SetGlobal(true);
     values.preload_textures.SetGlobal(true);
-    values.preload_game_to_ram.SetGlobal(true);
+    values.preload_to_ram.SetGlobal(true);
     values.disable_right_eye_render.SetGlobal(true);
 }
 

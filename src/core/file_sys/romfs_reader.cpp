@@ -209,14 +209,13 @@ void ArticRomFSReader::CloseFile() {
 MemoryRomFSReader::MemoryRomFSReader(std::unique_ptr<FileUtil::IOFile>&& file,
                                      std::size_t file_offset, std::size_t data_size_)
     : data_size(data_size_) {
-    // Preload entire file into memory
     data.resize(data_size);
     if (data_size > 0) {
         file->Seek(file_offset, SEEK_SET);
         const std::size_t read = file->ReadBytes(data.data(), data_size);
         if (read != data_size) {
-            LOG_ERROR(Service_FS, "Failed to preload file to RAM. Read {} bytes, expected {}",
-                      read, data_size);
+            LOG_ERROR(Service_FS, "Failed to preload file to RAM. Read {} bytes, expected {}", read,
+                      data_size);
         } else {
             LOG_INFO(Service_FS, "Preloaded {} bytes to RAM", data_size);
         }

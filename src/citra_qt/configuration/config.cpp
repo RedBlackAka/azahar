@@ -454,7 +454,7 @@ void QtConfig::ReadUtilityValues() {
     ReadGlobalSetting(Settings::values.dump_textures);
     ReadGlobalSetting(Settings::values.custom_textures);
     ReadGlobalSetting(Settings::values.preload_textures);
-    ReadGlobalSetting(Settings::values.preload_game_to_ram);
+    ReadGlobalSetting(Settings::values.preload_to_ram);
     ReadGlobalSetting(Settings::values.async_custom_loading);
 
     qt_config->endGroup();
@@ -1041,7 +1041,7 @@ void QtConfig::SaveUtilityValues() {
 
     WriteGlobalSetting(Settings::values.dump_textures);
     WriteGlobalSetting(Settings::values.custom_textures);
-    WriteGlobalSetting(Settings::values.preload_game_to_ram);
+    WriteGlobalSetting(Settings::values.preload_to_ram);
     WriteGlobalSetting(Settings::values.preload_textures);
     WriteGlobalSetting(Settings::values.async_custom_loading);
 

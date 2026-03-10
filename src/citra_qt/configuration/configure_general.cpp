@@ -99,7 +99,7 @@ void ConfigureGeneral::SetConfiguration() {
 #ifdef __unix__
         ui->toggle_gamemode->setChecked(Settings::values.enable_gamemode.GetValue());
 #endif
-        ui->toggle_preload_game->setChecked(Settings::values.preload_game_to_ram.GetValue());
+        ui->toggle_preload_rom->setChecked(Settings::values.preload_to_ram.GetValue());
     }
 
     if (Settings::values.frame_limit.GetValue() == 0) {
@@ -190,7 +190,7 @@ void ConfigureGeneral::ApplyConfiguration() {
 #ifdef __unix__
         Settings::values.enable_gamemode = ui->toggle_gamemode->isChecked();
 #endif
-        Settings::values.preload_game_to_ram = ui->toggle_preload_game->isChecked();
+        Settings::values.preload_to_ram = ui->toggle_preload_rom->isChecked();
     }
 }
 

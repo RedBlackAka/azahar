@@ -98,7 +98,7 @@ foreach(KEY IN ITEMS
     "custom_textures"
     "preload_textures"
     "async_custom_loading"
-    "preload_game_to_ram"
+    "preload_to_ram"
     "disable_right_eye_render"
     "audio_emulation"
     "enable_audio_stretching"

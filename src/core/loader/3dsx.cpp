@@ -333,8 +333,8 @@ ResultStatus AppLoader_THREEDSX::ReadRomFS(std::shared_ptr<FileSys::RomFSReader>
         if (!romfs_file_inner->IsOpen())
             return ResultStatus::Error;
 
-        // Use MemoryRomFSReader if the setting is enabled, otherwise use DirectRomFSReader
-        if (Settings::values.preload_game_to_ram.GetValue()) {
+        // Use MemoryRomFSReader if preloading is enabled, else use DirectRomFSReader
+        if (Settings::values.preload_to_ram.GetValue()) {
             romfs_file = std::make_shared<FileSys::MemoryRomFSReader>(std::move(romfs_file_inner),
                                                                       romfs_offset, romfs_size);
         } else {

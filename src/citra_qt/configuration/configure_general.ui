@@ -95,9 +95,9 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="toggle_preload_game">
+         <widget class="QCheckBox" name="toggle_preload_rom">
           <property name="text">
-           <string>Preload game to RAM (improves HDD performance)</string>
+           <string>Preload ROM to RAM</string>
           </property>
          </widget>
         </item>

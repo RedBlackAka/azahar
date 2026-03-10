@@ -646,13 +646,13 @@ Loader::ResultStatus NCCHContainer::ReadRomFS(std::shared_ptr<RomFSReader>& romf
 
     std::shared_ptr<RomFSReader> direct_romfs;
 
-    // Use MemoryRomFSReader if the setting is enabled, otherwise use DirectRomFSReader
-    if (Settings::values.preload_game_to_ram.GetValue()) {
-        direct_romfs =
-            std::make_shared<MemoryRomFSReader>(std::move(romfs_file_inner), romfs_offset, romfs_size);
+    // Use MemoryRomFSReader if preloading is enabled, else use DirectRomFSReader
+    if (Settings::values.preload_to_ram.GetValue()) {
+        direct_romfs = std::make_shared<MemoryRomFSReader>(std::move(romfs_file_inner),
+                                                           romfs_offset, romfs_size);
     } else {
-        direct_romfs =
-            std::make_shared<DirectRomFSReader>(std::move(romfs_file_inner), romfs_offset, romfs_size);
+        direct_romfs = std::make_shared<DirectRomFSReader>(std::move(romfs_file_inner),
+                                                           romfs_offset, romfs_size);
     }
 
     const auto path =

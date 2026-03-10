@@ -140,8 +140,7 @@ private:
 };
 
 /**
- * A RomFS reader that preloads the entire file into memory.
- * This improves performance on HDDs by eliminating file seeks.
+ * A RomFS reader that preloads ROM files into memory.
  */
 class MemoryRomFSReader : public RomFSReader {
 public:
