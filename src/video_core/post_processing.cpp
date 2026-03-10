@@ -14,7 +14,7 @@
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
 
-namespace OpenGL {
+namespace PostProcessShader {
 
 // The Dolphin shader header is added here for drop-in compatibility with most
 // of Dolphin's "glsl" shaders, which use hlsl types, hence the #define's below

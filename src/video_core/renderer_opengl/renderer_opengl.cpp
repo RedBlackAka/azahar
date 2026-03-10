@@ -385,7 +385,7 @@ void RendererOpenGL::ReloadShader(Settings::StereoRenderOption render_3d) {
         if (Settings::values.anaglyph_shader_name.GetValue() == "Dubois (builtin)") {
             shader_data += HostShaders::OPENGL_PRESENT_ANAGLYPH_FRAG;
         } else {
-            std::string shader_text = OpenGL::GetPostProcessingShaderCode(
+            std::string shader_text = PostProcessShader::GetPostProcessingShaderCode(
                 true, Settings::values.anaglyph_shader_name.GetValue());
             if (shader_text.empty()) {
                 // Should probably provide some information that the shader couldn't load
@@ -401,7 +401,7 @@ void RendererOpenGL::ReloadShader(Settings::StereoRenderOption render_3d) {
         if (Settings::values.pp_shader_name.GetValue() == "None (builtin)") {
             shader_data += HostShaders::OPENGL_PRESENT_FRAG;
         } else {
-            std::string shader_text = OpenGL::GetPostProcessingShaderCode(
+            std::string shader_text = PostProcessShader::GetPostProcessingShaderCode(
                 false, Settings::values.pp_shader_name.GetValue());
             if (shader_text.empty()) {
                 // Should probably provide some information that the shader couldn't load

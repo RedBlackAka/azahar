@@ -721,7 +721,7 @@ void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
         if (Settings::values.anaglyph_shader_name.GetValue() == "Dubois (builtin)") {
             shader_data += HostShaders::VULKAN_PRESENT_ANAGLYPH_FRAG;
         } else {
-            std::string shader_text = OpenGL::GetPostProcessingShaderCode(
+            std::string shader_text = PostProcessShader::GetPostProcessingShaderCode(
                 true, Settings::values.anaglyph_shader_name.GetValue());
             if (shader_text.empty()) {
                 // Should probably provide some information that the shader couldn't load
@@ -729,6 +729,7 @@ void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
             } else {
                 shader_data += shader_text;
             }
+        }
         current_pipeline = 1;
         break;
     case Settings::StereoRenderOption::Interlaced:
@@ -736,7 +737,7 @@ void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
         if (Settings::values.pp_shader_name.GetValue() == "None (builtin)") {
             shader_data += HostShaders::VULKAN_PRESENT_FRAG;
         } else {
-            std::string shader_text = OpenGL::GetPostProcessingShaderCode(
+            std::string shader_text = PostProcessShader::GetPostProcessingShaderCode(
                 false, Settings::values.pp_shader_name.GetValue());
             if (shader_text.empty()) {
                 // Should probably provide some information that the shader couldn't load
@@ -744,6 +745,7 @@ void RendererVulkan::ReloadPipeline(Settings::StereoRenderOption render_3d) {
             } else {
                 shader_data += shader_text;
             }
+        }
         current_pipeline = 2;
         draw_info.reverse_interlaced = render_3d == Settings::StereoRenderOption::ReverseInterlaced;
         break;
