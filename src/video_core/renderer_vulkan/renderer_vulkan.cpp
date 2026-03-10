@@ -24,6 +24,8 @@
 #include "video_core/host_shaders/vulkan_cursor_frag.h"
 #include "video_core/host_shaders/vulkan_cursor_vert.h"
 
+#include "video_core/shader/generator/glsl_shader_gen.h"
+
 #include <vk_mem_alloc.h>
 
 #if defined(__APPLE__) && !defined(HAVE_LIBRETRO)

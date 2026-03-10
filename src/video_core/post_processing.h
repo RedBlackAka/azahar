@@ -8,7 +8,7 @@
 #include <string_view>
 #include <vector>
 
-namespace OpenGL {
+namespace PostProcessShader {
 
 // Returns a vector of the names of the shaders available in the
 // "shaders" directory in citra's data directory
@@ -21,4 +21,4 @@ std::vector<std::string> GetPostProcessingShaderList(bool anaglyph);
 // If the shader cannot be loaded, an empty string is returned
 std::string GetPostProcessingShaderCode(bool anaglyph, std::string_view shader_name);
 
-} // namespace OpenGL
+} // namespace PostProcessShader

@@ -209,4 +209,4 @@ std::string GetPostProcessingShaderCode(bool anaglyph, std::string_view shader) 
     return dolphin_shader_header + shader_text.str();
 }
 
-} // namespace OpenGL
+} // namespace PostProcessShader
