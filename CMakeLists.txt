@@ -347,7 +347,7 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 if (ENABLE_QT)
-    if (NOT USE_SYSTEM_QT)
+    if (USE_SYSTEM_QT)
         download_qt(6.1.0)
     endif()
 
