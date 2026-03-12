@@ -347,7 +347,9 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 if (ENABLE_QT)
-    download_qt(6.1.0)
+    if (NOT USE_SYSTEM_QT)
+        download_qt(6.9.3)
+    endif()
 
     find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia Concurrent)
 
