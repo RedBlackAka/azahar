@@ -33,7 +33,7 @@ using namespace Common::Literals;
 using namespace Pica::Shader::Generator;
 
 constexpr u64 STREAM_BUFFER_SIZE = 64_MiB;
-constexpr u64 UNIFORM_BUFFER_SIZE = 8_MiB;
+constexpr u64 UNIFORM_BUFFER_SIZE = 16_MiB;
 constexpr u64 TEXTURE_BUFFER_SIZE = 2_MiB;
 
 constexpr vk::BufferUsageFlags BUFFER_USAGE =
