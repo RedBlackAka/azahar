@@ -309,6 +309,8 @@ function(detect_architecture symbol arch)
         # CMake's crazy scope rules will keep it defined
         if (ARCHITECTURE_${arch})
             set(ARCHITECTURE "${arch}" PARENT_SCOPE)
+            set(ARCHITECTURE_${arch} 1 PARENT_SCOPE)
+            add_definitions(-DARCHITECTURE_${arch}=1)
         endif()
     endif()
 endfunction()
