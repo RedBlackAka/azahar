@@ -16,7 +16,7 @@ add_library(citra_libretro_common OBJECT
         core_settings.h)
 
 target_compile_definitions(citra_libretro_common PRIVATE HAVE_LIBRETRO)
-target_link_libraries(citra_libretro_common PRIVATE citra_common citra_core video_core libretro)
+target_link_libraries(citra_libretro_common PRIVATE citra_common citra_core video_core libretro tsl::robin_map)
 if(ENABLE_OPENGL)
     target_link_libraries(citra_libretro_common PRIVATE glad)
 endif()

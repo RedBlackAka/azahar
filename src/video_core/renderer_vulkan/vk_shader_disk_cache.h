@@ -7,6 +7,7 @@
 #include <mutex>
 #include <optional>
 #include <unordered_set>
+#include <tsl/robin_map.h>
 
 #include "common/common_types.h"
 #include "common/file_util.h"
@@ -353,7 +354,7 @@ private:
     std::unordered_map<size_t, Shader> fixed_geometry_shaders;
     std::unordered_set<u64> known_geometry_shaders;
 
-    std::unordered_map<u64, std::unique_ptr<GraphicsPipeline>, Common::IdentityHash<u64>>
+    tsl::robin_map<u64, std::unique_ptr<GraphicsPipeline>, Common::IdentityHash<u64>>
         graphics_pipelines;
     std::unordered_set<u64> known_graphic_pipelines;
 };

@@ -250,7 +250,7 @@ GraphicsPipeline* ShaderDiskCache::GetPipeline(const PipelineInfo& info) {
             // the pipeline info so that it is transferable.
             parent.UseTrivialGeometryShader();
         }
-        it->second = std::make_unique<GraphicsPipeline>(
+        it.value() = std::make_unique<GraphicsPipeline>(
             parent.instance, parent.renderpass_cache, info, *parent.driver_pipeline_cache,
             *parent.pipeline_layout, parent.current_shaders, &parent.pipeline_workers);
     }
@@ -266,7 +266,7 @@ GraphicsPipeline* ShaderDiskCache::GetPipeline(const PipelineInfo& info) {
         AppendPLConfig(pl_cache, entry, hash);
     }
 
-    return it->second.get();
+    return it.value().get();
 }
 
 ShaderDiskCache::SourceFileCacheVersionHash ShaderDiskCache::GetSourceFileCacheVersionHash() {
@@ -1452,11 +1452,11 @@ bool ShaderDiskCache::InitPLCache(const std::atomic_bool& stop_loading,
             info.state = entry->pl_info;
 
             auto [it_pl, _] = graphics_pipelines.try_emplace(pl_hash_opt);
-            it_pl->second = std::make_unique<GraphicsPipeline>(
+            it_pl.value() = std::make_unique<GraphicsPipeline>(
                 parent.instance, parent.renderpass_cache, info, *parent.driver_pipeline_cache,
                 *parent.pipeline_layout, shaders, &parent.pipeline_workers);
 
-            it_pl->second->TryBuild(false);
+            it_pl.value()->TryBuild(false);
 
             LOG_DEBUG(Render_Vulkan, "    built.");
 

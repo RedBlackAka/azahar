@@ -1406,7 +1406,7 @@ void RasterizerCache<T>::UnregisterSurface(SurfaceId surface_id) {
             ASSERT_MSG(false, "Unregistering unregistered page=0x{:x}", page << CITRA_PAGEBITS);
             return;
         }
-        std::vector<SurfaceId>& surfaces = page_it->second;
+        std::vector<SurfaceId>& surfaces = page_it.value();
         const auto vector_it = std::find(surfaces.begin(), surfaces.end(), surface_id);
         if (vector_it == surfaces.end()) {
             ASSERT_MSG(false, "Unregistering unregistered surface in page=0x{:x}",

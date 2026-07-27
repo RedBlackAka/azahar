@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 #include <boost/icl/interval_map.hpp>
+#include <tsl/robin_map.h>
 
 #include "video_core/rasterizer_cache/framebuffer_base.h"
 #include "video_core/rasterizer_cache/sampler_params.h"
@@ -216,7 +217,7 @@ private:
     Pica::RegsInternal& regs;
     RendererBase& renderer;
     std::unordered_map<TextureCubeConfig, TextureCube> texture_cube_cache;
-    std::unordered_map<u64, std::vector<SurfaceId>, Common::IdentityHash<u64>> page_table;
+    tsl::robin_pg_map<u64, std::vector<SurfaceId>, Common::IdentityHash<u64>> page_table;
     std::unordered_map<FramebufferParams, FramebufferId> framebuffers;
     std::unordered_map<SamplerParams, SamplerId> samplers;
     std::list<std::pair<SurfaceId, u64>> sentenced;
