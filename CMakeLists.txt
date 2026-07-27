@@ -400,9 +400,6 @@ if (ENABLE_QT)
     message(STATUS "Using host Qt at ${QT_HOST_PATH}")
 endif()
 
-# Use system tsl::robin_map if available (otherwise we fallback to version bundled with dynarmic)
-find_package(tsl-robin-map QUIET)
-
 # Platform-specific library requirements
 # ======================================
 
