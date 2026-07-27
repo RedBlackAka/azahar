@@ -29,6 +29,7 @@ if (BSD STREQUAL "NetBSD")
 endif()
 
 target_link_libraries(tests PRIVATE citra_common citra_core video_core audio_core)
+add_library(common ALIAS citra_common)
 target_link_libraries(tests PRIVATE ${PLATFORM_LIBRARIES} catch2 nihstro-headers Threads::Threads)
 
 if (ENABLE_LIBRETRO)
