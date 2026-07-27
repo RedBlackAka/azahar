@@ -79,12 +79,6 @@ public:
         return memory.WriteExclusive64(vaddr, value, expected);
     }
 
-    void InterpreterFallback(VAddr pc, std::size_t num_instructions) override {
-        // Should never happen.
-        UNREACHABLE_MSG("InterpeterFallback reached with pc = 0x{:08x}, code = 0x{:08x}, num = {}",
-                        pc, MemoryReadCode(pc).value(), num_instructions);
-    }
-
     void CallSVC(std::uint32_t swi) override {
         svc_context.CallSVC(swi);
     }
