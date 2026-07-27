@@ -266,7 +266,7 @@ GraphicsPipeline* ShaderDiskCache::GetPipeline(const PipelineInfo& info) {
         AppendPLConfig(pl_cache, entry, hash);
     }
 
-    return it.->second.get();
+    return it->second.get();
 }
 
 ShaderDiskCache::SourceFileCacheVersionHash ShaderDiskCache::GetSourceFileCacheVersionHash() {
