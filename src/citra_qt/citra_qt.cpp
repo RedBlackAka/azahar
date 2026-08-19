@@ -2678,9 +2678,6 @@ void GMainWindow::OnLoadComplete() {
 }
 
 void GMainWindow::ToggleFullscreen() {
-    if (!emulation_running) {
-        return;
-    }
     if (secondary_window->isVisible() && secondary_window->isActiveWindow()) {
         // undo the action and fullscreen secondary manually
         ui->action_Fullscreen->toggle();
