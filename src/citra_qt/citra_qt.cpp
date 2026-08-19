@@ -1613,9 +1613,6 @@ void GMainWindow::BootGame(const QString& filename) {
     loading_screen->show();
 
     emulation_running = true;
-    if (ui->action_Fullscreen->isChecked()) {
-        ShowFullscreen();
-    }
 
     OnResumeGame(true);
 }
@@ -1623,10 +1620,6 @@ void GMainWindow::BootGame(const QString& filename) {
 void GMainWindow::ShutdownGame() {
     if (!emulation_running) {
         return;
-    }
-
-    if (ui->action_Fullscreen->isChecked()) {
-        HideFullscreen();
     }
 
     auto video_dumper = system.GetVideoDumper();
