@@ -11,7 +11,7 @@
 #include "video_core/pica/regs_shader.h"
 #include "video_core/pica/shader_setup.h"
 
-#if defined(CITRA_HAS_SSE42)
+#if defined(CITRA_HAS_AVX2)
 #include <nmmintrin.h>
 #endif
 
@@ -147,7 +147,7 @@ inline u32 HighestSetBitIndex(u32 mask) {
 // Process 32 bit words in groups of 4. If any of the words changed,
 // store the new value and return true, plus the index of the word
 // that changed.
-#if defined(CITRA_HAS_SSE42)
+#if defined(CITRA_HAS_AVX2)
 static inline u32 ProcessBlockSSE42(u32* dst, const u32* values) {
     // Load 4 old values into old_vals.
     const __m128i old_vals = _mm_loadu_si128(reinterpret_cast<const __m128i*>(dst));
@@ -219,9 +219,9 @@ void ShaderSetup::UpdateProgramCodeRange(size_t offset, const u32* __restrict va
     u32 i = 0;
 
     // SIMD block.
-#if defined(CITRA_HAS_SSE42) || defined(CITRA_HAS_NEON)
+#if defined(CITRA_HAS_AVX2) || defined(CITRA_HAS_NEON)
     for (; i + 4 <= count; i += 4) {
-#if defined(CITRA_HAS_SSE42)
+#if defined(CITRA_HAS_AVX2)
         u32 index = ProcessBlockSSE42(dst + i, values + i);
 #else
         u32 index = ProcessBlockNEON(dst + i, values + i);
@@ -266,9 +266,9 @@ void ShaderSetup::UpdateSwizzleDataRange(size_t offset, const u32* __restrict va
     u32 i = 0;
 
     // SIMD block.
-#if defined(CITRA_HAS_SSE42) || defined(CITRA_HAS_NEON)
+#if defined(CITRA_HAS_AVX2) || defined(CITRA_HAS_NEON)
     for (; i + 4 <= count; i += 4) {
-#if defined(CITRA_HAS_SSE42)
+#if defined(CITRA_HAS_AVX2)
         u32 index = ProcessBlockSSE42(dst + i, values + i);
 #else
         u32 index = ProcessBlockNEON(dst + i, values + i);

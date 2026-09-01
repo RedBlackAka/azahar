@@ -463,11 +463,9 @@ GMainWindow::GMainWindow(Core::System& system_)
 #if CITRA_ARCH(x86_64)
     const auto& caps = Common::GetCPUCaps();
     std::string cpu_string = caps.cpu_string;
-    if (caps.avx || caps.avx2 || caps.avx512) {
+    if (caps.avx || caps.avx2) {
         cpu_string += " | AVX";
-        if (caps.avx512) {
-            cpu_string += "512";
-        } else if (caps.avx2) {
+        if (caps.avx2) {
             cpu_string += '2';
         }
         if (caps.fma) {

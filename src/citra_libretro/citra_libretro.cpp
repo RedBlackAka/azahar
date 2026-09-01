@@ -503,15 +503,6 @@ void retro_reset() {
 bool retro_load_game(const struct retro_game_info* info) {
     LOG_INFO(Frontend, "Starting Azahar RetroArch game...");
 
-#if CITRA_ARCH(x86_64) && CITRA_HAS_SSE42
-    if (!Common::GetCPUCaps().sse4_2) {
-        LOG_CRITICAL(Frontend, "This CPU does not support SSE4.2, which is required by this build");
-        LibRetro::DisplayMessage(
-            "This CPU does not support SSE4.2, which is required by this build");
-        return false;
-    }
-#endif
-
     UpdateSettings();
 
     // If using HW rendering, don't actually load the game here. azahar wants

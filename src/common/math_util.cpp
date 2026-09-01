@@ -5,7 +5,7 @@
 #include <algorithm>
 #include "math_util.h"
 
-#if defined(CITRA_HAS_SSE42)
+#if defined(CITRA_HAS_AVX2)
 #include <emmintrin.h>
 #include <smmintrin.h>
 #endif
@@ -30,14 +30,14 @@ std::pair<u8, u8> FindMinMax(const std::span<const u8>& data) {
     const size_t count = data.size();
     const u8* data_ptr = data.data();
     u8 final_min, final_max;
-#if defined(CITRA_HAS_SSE42) || defined(CITRA_HAS_NEON)
+#if defined(CITRA_HAS_AVX2) || defined(CITRA_HAS_NEON)
     u8 simd_min = 0xFF;
     u8 simd_max = 0;
     size_t i = 0;
     constexpr size_t simd_line_count = 16;
     constexpr size_t count_threshold = simd_line_count * 2;
     if (count >= count_threshold) {
-#if defined(CITRA_HAS_SSE42)
+#if defined(CITRA_HAS_AVX2)
         __m128i vmin = _mm_set1_epi8(static_cast<char>(0xFF));
         __m128i vmax = _mm_setzero_si128();
         for (; i + simd_line_count <= count; i += simd_line_count) {
@@ -63,7 +63,7 @@ std::pair<u8, u8> FindMinMax(const std::span<const u8>& data) {
         simd_min = *std::min_element(tmp, tmp + simd_line_count);
         vst1q_u8(tmp, vmax);
         simd_max = *std::max_element(tmp, tmp + simd_line_count);
-#endif // CITRA_HAS_SSE42
+#endif // CITRA_HAS_AVX2
     }
     DISABLE_VECTORIZE
     for (; i < count; ++i) {
@@ -82,7 +82,7 @@ std::pair<u8, u8> FindMinMax(const std::span<const u8>& data) {
         final_min = std::min(final_min, val);
         final_max = std::max(final_max, val);
     }
-#endif // CITRA_HAS_SSE42 || CITRA_HAS_NEON
+#endif // CITRA_HAS_AVX2 || CITRA_HAS_NEON
 
     return {final_min, final_max};
 }
@@ -92,14 +92,14 @@ std::pair<u16, u16> FindMinMax(const std::span<const u16>& data) {
     const u16* data_ptr = data.data();
     u16 final_min, final_max;
 
-#if defined(CITRA_HAS_SSE42) || defined(CITRA_HAS_NEON)
+#if defined(CITRA_HAS_AVX2) || defined(CITRA_HAS_NEON)
     u16 simd_min = 0xFFFF;
     u16 simd_max = 0;
     size_t i = 0;
     constexpr size_t simd_line_count = 8;
     constexpr size_t count_threshold = simd_line_count * 2;
     if (count >= count_threshold) {
-#if defined(CITRA_HAS_SSE42)
+#if defined(CITRA_HAS_AVX2)
         __m128i vmin = _mm_set1_epi16(static_cast<short>(0xFFFF));
         __m128i vmax = _mm_setzero_si128();
         for (; i + simd_line_count <= count; i += simd_line_count) {
@@ -125,7 +125,7 @@ std::pair<u16, u16> FindMinMax(const std::span<const u16>& data) {
         simd_min = *std::min_element(tmp, tmp + simd_line_count);
         vst1q_u16(tmp, vmax);
         simd_max = *std::max_element(tmp, tmp + simd_line_count);
-#endif // CITRA_HAS_SSE42
+#endif // CITRA_HAS_AVX2
     }
     DISABLE_VECTORIZE
     for (; i < count; ++i) {
@@ -144,7 +144,7 @@ std::pair<u16, u16> FindMinMax(const std::span<const u16>& data) {
         final_min = std::min(final_min, val);
         final_max = std::max(final_max, val);
     }
-#endif // CITRA_HAS_SSE42 || CITRA_HAS_NEON
+#endif // CITRA_HAS_AVX2 || CITRA_HAS_NEON
 
     return {final_min, final_max};
 }

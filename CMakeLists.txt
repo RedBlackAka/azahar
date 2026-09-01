@@ -142,11 +142,11 @@ CMAKE_DEPENDENT_OPTION(ENABLE_OPENGL "Enables the OpenGL renderer" ${DEFAULT_ENA
 # NetBSD doesn't support Vulkan yet, remove this check when it does.
 CMAKE_DEPENDENT_OPTION(ENABLE_VULKAN "Enables the Vulkan renderer" ON "NOT (BSD MATCHES \"NetBSD\")" OFF)
 
-option(ENABLE_DISCORD_RPC "Enables Discord Rich Presence" OFF)
+option(ENABLE_DISCORD_RPC "Enables Discord Rich Presence" ON)
 
 option(ENABLE_MICROPROFILE "Enables microprofile capabilities" OFF)
 
-option(ENABLE_SSE42 "Enable SSE4.2 optimizations on x86_64" ON)
+option(ENABLE_AVX2 "Enable AVX2 optimizations on x86_64" ON)
 
 option(ENABLE_DEVELOPER_OPTIONS "Enable functionality targeted at emulator developers" OFF)
 
@@ -199,15 +199,15 @@ if (ENABLE_SDL2)
     add_definitions(-DENABLE_SDL2)
 endif()
 
-if(ENABLE_SSE42 AND (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64"))
-    message(STATUS "SSE4.2 enabled for x86_64")
+if(ENABLE_AVX2 AND (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64"))
+    message(STATUS "AVX2 enabled for x86_64")
     if(MSVC)
-        SET(SSE42_COMPILE_OPTION /arch:SSE4.2)
+        SET(AVX2_COMPILE_OPTION /arch:AVX2)
     else()
-        SET(SSE42_COMPILE_OPTION -msse4.1 -msse4.2)
+        SET(AVX2_COMPILE_OPTION -mavx2 -mfma -mbmi2)
     endif()
-    add_compile_options(${SSE42_COMPILE_OPTION})
-    add_compile_definitions(CITRA_HAS_SSE42)
+    add_compile_options(${AVX2_COMPILE_OPTION})
+    add_compile_definitions(CITRA_HAS_AVX2)
 endif()
 
 include(CitraHandleSystemLibs)

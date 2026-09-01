@@ -28,37 +28,9 @@ __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
 }
 #endif
 
-#if CITRA_HAS_SSE42
-#include "common/x64/cpu_detect.h"
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
-static bool CheckAndReportSSE42() {
-    const auto& caps = Common::GetCPUCaps();
-    if (!caps.sse4_2) {
-        const std::string error_msg =
-            "This application requires a CPU with SSE4.2 support or higher.\nTo run on unsupported "
-            "systems, recompile the application with the ENABLE_SSE42 option disabled.";
-#ifdef _WIN32
-        MessageBoxA(nullptr, error_msg.c_str(), "Incompatible CPU", MB_OK | MB_ICONERROR);
-#endif
-        std::cerr << "Error: " << error_msg << std::endl;
-        return false;
-    }
-    return true;
-}
-#endif
-
 int main(int argc, char* argv[]) {
     Common::DetachedTasks detached_tasks;
     SCOPE_EXIT({ detached_tasks.WaitForAllTasks(); });
-
-#if CITRA_HAS_SSE42
-    if (!CheckAndReportSSE42()) {
-        return 1;
-    }
-#endif
 
     if (CitraCLI::CheckForOptions(CitraCLI::cli_capture_optstring, argc, argv)) {
         return CitraCLI::ParseCommand(argc, argv);
