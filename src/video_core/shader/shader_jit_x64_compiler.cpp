@@ -1262,7 +1262,6 @@ void JitShader::Compile_Exp2(Xbyak::Label subroutine) {
         shl(eax, 23);
         movd(SCRATCH, eax);
         // SCRATCH contains 2^(round(input)).
-    }
 
     // Complete computation of polynomial.
     movss(SCRATCH2, xword[rip + c0]);
