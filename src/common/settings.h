@@ -142,6 +142,14 @@ static inline u8 GetAntiAliasingSampleCount(AntiAliasingMethod antialiasing_meth
     }
 }
 
+enum class Anisotropy : u32 {
+    None,
+    Filter2x,
+    Filter4x,
+    Filter8x,
+    Filter16x,
+};
+
 enum class TextureFilter : u32 {
     NoFilter = 0,
     Anime4K = 1,
@@ -583,6 +591,7 @@ struct Values {
     Setting<bool> use_shader_jit{true, Keys::use_shader_jit};
     SwitchableSetting<u32, true> resolution_factor{1, 0, 18, Keys::resolution_factor};
     SwitchableSetting<AntiAliasingMethod> antialiasing{AntiAliasingMethod::None, "antialiasing"};
+
     SwitchableSetting<bool> use_integer_scaling{false, Keys::use_integer_scaling};
     SwitchableSetting<double, true> frame_limit{100, 0, 1000, Keys::frame_limit};
     SwitchableSetting<double, true> turbo_limit{200, 0, 1000, Keys::turbo_limit};

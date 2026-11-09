@@ -18,6 +18,7 @@
         GL_EXT_clip_cull_distance,
         GL_EXT_shader_framebuffer_fetch,
         GL_EXT_texture_compression_s3tc,
+        GL_EXT_texture_filter_anisotropic,
         GL_INTEL_fragment_shader_ordering,
         GL_NV_blend_minmax_factor,
         GL_NV_fragment_shader_interlock
@@ -27,7 +28,7 @@
     Reproducible: False
 
     Commandline:
-        --profile="core" --api="gl=4.3,gles2=3.2" --generator="c" --spec="gl" --extensions="GL_AMD_blend_minmax_factor,GL_ARB_buffer_storage,GL_ARB_clear_texture,GL_ARB_fragment_shader_interlock,GL_ARB_get_texture_sub_image,GL_ARB_texture_compression_bptc,GL_ARM_shader_framebuffer_fetch,GL_EXT_buffer_storage,GL_EXT_clip_cull_distance,GL_EXT_shader_framebuffer_fetch,GL_EXT_texture_compression_s3tc,GL_INTEL_fragment_shader_ordering,GL_NV_blend_minmax_factor,GL_NV_fragment_shader_interlock"
+        --profile="core" --api="gl=4.3,gles2=3.2" --generator="c" --spec="gl" --extensions="GL_AMD_blend_minmax_factor,GL_ARB_buffer_storage,GL_ARB_clear_texture,GL_ARB_fragment_shader_interlock,GL_ARB_get_texture_sub_image,GL_ARB_texture_compression_bptc,GL_ARM_shader_framebuffer_fetch,GL_EXT_buffer_storage,GL_EXT_clip_cull_distance,GL_EXT_shader_framebuffer_fetch,GL_EXT_texture_compression_s3tc,GL_EXT_texture_filter_anisotropic,GL_INTEL_fragment_shader_ordering,GL_NV_blend_minmax_factor,GL_NV_fragment_shader_interlock"
     Online:
         https://glad.dav1d.de/#profile=core&language=c&specification=gl&loader=on&api=gl%3D4.3&api=gles2%3D3.2&extensions=GL_AMD_blend_minmax_factor&extensions=GL_ARB_buffer_storage&extensions=GL_ARB_clear_texture&extensions=GL_ARB_fragment_shader_interlock&extensions=GL_ARB_get_texture_sub_image&extensions=GL_ARB_texture_compression_bptc&extensions=GL_ARM_shader_framebuffer_fetch&extensions=GL_EXT_buffer_storage&extensions=GL_EXT_clip_cull_distance&extensions=GL_EXT_shader_framebuffer_fetch&extensions=GL_EXT_texture_compression_s3tc&extensions=GL_INTEL_fragment_shader_ordering&extensions=GL_NV_blend_minmax_factor&extensions=GL_NV_fragment_shader_interlock
 */
@@ -3346,6 +3347,8 @@ GLAPI PFNGLGETNUNIFORMUIVPROC glad_glGetnUniformuiv;
 #define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83F1
 #define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT 0x83F2
 #define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT 0x83F3
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #define GL_FETCH_PER_SAMPLE_ARM 0x8F65
 #define GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM 0x8F66
 #define GL_MAP_PERSISTENT_BIT_EXT 0x0040
@@ -3412,6 +3415,10 @@ GLAPI int GLAD_GL_EXT_shader_framebuffer_fetch;
 #ifndef GL_EXT_texture_compression_s3tc
 #define GL_EXT_texture_compression_s3tc 1
 GLAPI int GLAD_GL_EXT_texture_compression_s3tc;
+#endif
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_EXT_texture_filter_anisotropic 1
+GLAPI int GLAD_GL_EXT_texture_filter_anisotropic;
 #endif
 #ifndef GL_INTEL_fragment_shader_ordering
 #define GL_INTEL_fragment_shader_ordering 1
